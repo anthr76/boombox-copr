@@ -133,7 +133,7 @@ Provides:  bundled(golang(sigs.k8s.io/controller-runtime/pkg/envtest))
 
 %build
 go mod download -x
-go mod verify -x
+go mod verify
 for cmd in cmd/* ; do
   %gobuild -o %{gobuilddir}/bin/$(basename $cmd) %{goipath}/$cmd
 done
