@@ -25,6 +25,7 @@ URL:            %{gourl}
 Source0:        %{gosource}
 
 BuildRequires: git
+BuildRequires: golang-sigs-k8s-kustomize
 
 Provides:  bundled(golang(github.com/cyphar/filepath-securejoin))
 Provides:  bundled(golang(github.com/fluxcd/go-git-providers/github))
@@ -104,25 +105,6 @@ Provides:  bundled(golang(sigs.k8s.io/kustomize/api/provider))
 Provides:  bundled(golang(sigs.k8s.io/kustomize/api/types))
 Provides:  bundled(golang(sigs.k8s.io/yaml))
 
-%if %{with check}
-# Tests
-Provides:  bundled(golang(github.com/Azure/azure-event-hubs-go/v3))
-Provides:  bundled(golang(github.com/fluxcd/pkg/runtime/events))
-Provides:  bundled(golang(github.com/google/go-cmp/cmp))
-Provides:  bundled(golang(github.com/hashicorp/terraform-exec/tfexec))
-Provides:  bundled(golang(github.com/hashicorp/terraform-exec/tfinstall))
-Provides:  bundled(golang(github.com/libgit2/git2go/v31))
-Provides:  bundled(golang(github.com/mattn/go-shellwords))
-Provides:  bundled(golang(github.com/microsoft/azure-devops-go-api/azuredevops))
-Provides:  bundled(golang(github.com/microsoft/azure-devops-go-api/azuredevops/git))
-Provides:  bundled(golang(github.com/stretchr/testify/require))
-Provides:  bundled(golang(github.com/whilp/git-urls))
-Provides:  bundled(golang(go.uber.org/multierr))
-Provides:  bundled(golang(golang.org/x/crypto/ssh/testdata))
-Provides:  bundled(golang(k8s.io/client-go/kubernetes/scheme))
-Provides:  bundled(golang(sigs.k8s.io/controller-runtime/pkg/envtest))
-%endif
-
 %description
 %{common_description}
 
@@ -132,7 +114,56 @@ Provides:  bundled(golang(sigs.k8s.io/controller-runtime/pkg/envtest))
 %goprep -k
 
 %build
-go mod download -x
+
+# God bless
+
+IN_PATH=${1:-"%{_builddir}/%{repo}-%{version}/manifests"}
+OUT_PATH=${2:-"%{_builddir}/%{repo}-%{version}/cmd/flux/manifests"}
+
+info() {
+    echo '[INFO] ' "$@"
+}
+
+fatal() {
+    echo '[ERROR] ' "$@" >&2
+    exit 1
+}
+
+build() {
+  info "building $(basename $2)"
+  kustomize build "$1" > "$2"
+}
+
+if ! [ -x "$(command -v kustomize)" ]; then
+  fatal 'kustomize is not installed'
+fi
+
+rm -rf $OUT_PATH
+mkdir -p $OUT_PATH
+files=""
+
+info using "$(kustomize version --short)"
+
+# build controllers
+for controller in ${IN_PATH}/bases/*/; do
+    output_path="${OUT_PATH}/$(basename $controller).yaml"
+    build $controller $output_path
+    files+=" $(basename $output_path)"
+done
+
+# build rbac
+rbac_path="${IN_PATH}/rbac"
+rbac_output_path="${OUT_PATH}/rbac.yaml"
+build $rbac_path $rbac_output_path
+files+=" $(basename $rbac_output_path)"
+
+# build policies
+policies_path="${IN_PATH}/policies"
+policies_output_path="${OUT_PATH}/policies.yaml"
+build $policies_path $policies_output_path
+files+=" $(basename $policies_output_path)"
+
+go mod vendor -v
 go mod verify
 for cmd in cmd/* ; do
   %gobuild -o %{gobuilddir}/bin/$(basename $cmd) %{goipath}/$cmd
@@ -142,11 +173,6 @@ done
 %gopkginstall
 install -m 0755 -vd                     %{buildroot}%{_bindir}
 install -m 0755 -vp %{gobuilddir}/bin/* %{buildroot}%{_bindir}/
-
-%if %{with check}
-%check
-%gocheck
-%endif
 
 %files
 %license LICENSE
