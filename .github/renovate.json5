@@ -20,4 +20,11 @@
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
     }
   ],
+  "packageRules": [
+    {
+      "packagePatterns": [".*"],
+      "managers": ["regex"],
+      "extractVersion": "^(v|release-)?(?<version>.*)$"
+    }
+  ],
 }
