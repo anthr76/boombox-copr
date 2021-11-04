@@ -173,37 +173,16 @@ for cmd in cmd/* ; do
   %gobuild -o %{gobuilddir}/bin/$(basename $cmd) %{goipath}/$cmd
 done
 
-# Build the shell autocomplete file
-%{buildroot}/%{_bindir}/%{name} completion bash > bash-completion
-%{buildroot}/%{_bindir}/%{name} completion zsh  > zsh-completion
-%{buildroot}/%{_bindir}/%{name} completion fish > fish-completion
-
 %install
 %gopkginstall
 install -m 0755 -vd                     %{buildroot}%{_bindir}
 install -m 0755 -vp %{gobuilddir}/bin/* %{buildroot}%{_bindir}/
-
-# Install shell completions
-install -D -p -m 0644 bash-completion %{buildroot}%{_datadir}/bash-completion/completions/%{name}
-install -D -p -m 0644 zsh-completion  %{buildroot}%{_datadir}/zsh/site-functions/_%{name}
-install -D -p -m 0644 fish-completion %{buildroot}%{_datadir}/fish/completions/%{name}.fish
 
 %files
 %license LICENSE
 %doc docs CODE_OF_CONDUCT.md CONTRIBUTING.md README.md action/README.md
 %doc install/README.md
 %{_bindir}/*
-
-# filesystem owns all the parent directories here
-%{_datadir}/bash-completion/completions/%{name}
-# own parent directories in case zsh is not installed
-%dir %{_datadir}/zsh
-%dir %{_datadir}/zsh/site-functions
-%{_datadir}/zsh/site-functions/_%{name}
-# own parent directories in case fish is not installed
-%dir %{_datadir}/fish
-%dir %{_datadir}/fish/completions
-%{_datadir}/fish/completions/%{name}.fish
 
 %gopkgfiles
 
