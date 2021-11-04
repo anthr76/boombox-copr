@@ -166,6 +166,9 @@ files+=" $(basename $policies_output_path)"
 
 go mod vendor -v
 go mod verify
+# Set the version as part of the build
+export LDFLAGS="-X main.Version=%{version}"
+sed -i 's/0.0.0-dev.0/%{version}/g' cmd/flux/main.go
 for cmd in cmd/* ; do
   %gobuild -o %{gobuilddir}/bin/$(basename $cmd) %{goipath}/$cmd
 done
