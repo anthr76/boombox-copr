@@ -17,7 +17,7 @@ GitOps Toolkit.}
                         action/README.md install/README.md
 
 Name:           %{goname}
-Release:        1%{?dist}
+Release:        0%{?dist}
 Summary:        Open and extensible continuous delivery solution for Kubernetes. Powered by GitOps Toolkit
 
 # Upstream license specification: Apache-2.0
