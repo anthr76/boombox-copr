@@ -17,7 +17,7 @@ GitOps Toolkit.}
                         action/README.md install/README.md
 
 Name:           %{goname}
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Open and extensible continuous delivery solution for Kubernetes. Powered by GitOps Toolkit
 
 # Upstream license specification: Apache-2.0
@@ -187,6 +187,9 @@ install -m 0755 -vp %{gobuilddir}/bin/* %{buildroot}%{_bindir}/
 %gopkgfiles
 
 %changelog
+* Thu Nov 04 2021 Anthony Rabbito <hello@anthonyrabbito.com> 0.20.0-3
+- 
+
 * Thu Nov 04 2021 Anthony Rabbito <hello@anthonyrabbito.com> 0.20.0-2
 - new package built with tito
 
