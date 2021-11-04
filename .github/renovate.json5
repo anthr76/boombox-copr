@@ -15,7 +15,7 @@
         ".+\\.spec$"
       ],
       "matchStrings": [
-        "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)?( versioning=(?<versioning>.*=?))?\n *Version: (?<currentValue>.*=?)"
+        "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)?( versioning=(?<versioning>.*=?))?\n *Version:\s* (?<currentValue>.*=?)"
       ],
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
     }
