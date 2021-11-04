@@ -5,7 +5,7 @@
 # https://github.com/fluxcd/flux2
 %global goipath         github.com/fluxcd/flux2
 # renovate: datasource=github-releases depName=fluxcd/flux2
-Version: 0.20.0
+Version: 0.21.1
 
 %gometa
 
