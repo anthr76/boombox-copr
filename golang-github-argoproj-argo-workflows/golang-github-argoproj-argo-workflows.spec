@@ -24,7 +24,7 @@ Workflow engine for Kubernetes.}
                         ui/README.md
 
 Name:           %{goname}
-Release:        %autorelease -e %{build_timestamp}
+Release:        %{build_timestamp}%{?dist}
 Summary:        Workflow engine for Kubernetes
 
 # Upstream license specification: Apache-2.0
