@@ -4,7 +4,8 @@
 
 # https://github.com/argoproj/argo-workflows
 %global goipath         github.com/argoproj/argo-workflows
-Version:                3.2.3
+# renovate: datasource=github-releases depName=argoproj/argo-workflows
+Version: 3.2.3
 
 %gometa
 
@@ -30,6 +31,8 @@ Summary:        Workflow engine for Kubernetes
 License:        ASL 2.0
 URL:            %{gourl}
 Source0:        %{gosource}
+
+BuildRequires: git
 
 Provides:  golang(cloud.google.com/go/storage)
 Provides:  golang(github.com/aliyun/aliyun-oss-go-sdk/oss)
