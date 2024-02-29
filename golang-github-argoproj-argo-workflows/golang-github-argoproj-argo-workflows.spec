@@ -5,7 +5,7 @@
 # https://github.com/argoproj/argo-workflows
 %global goipath         github.com/argoproj/argo-workflows
 # renovate: datasource=github-releases depName=argoproj/argo-workflows
-Version: 3.2.3
+Version: 3.5.5
 
 %gometa
 
